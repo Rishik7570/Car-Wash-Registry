@@ -5,6 +5,7 @@ import OpenScreen from '../screens/OpenScreen';
 import History from '../screens/History';
 import Splash from '../screens/Splash';
 import EditEntry from '../screens/EditEntry';
+import Details from '../screens/Details';
 
 export type RootStackParamlist = {
   Splash: undefined;
@@ -13,6 +14,8 @@ export type RootStackParamlist = {
   Search: undefined;
   History: undefined;
   Edit: { dateKey: string; entryIndex: number };
+  Details: { dateKey: string; entryIndex: number };
+
 };
 
 const Stack = createNativeStackNavigator<RootStackParamlist>();
@@ -25,7 +28,8 @@ const Router = () => {
       <Stack.Screen name="Home" component={Home} options={{headerShown:false}}/>
       <Stack.Screen name="Search" component={SearchPage} options={{headerShown:false}}/>
       <Stack.Screen name="History" component={History} options={{headerShown:false}}/>
-      <Stack.Screen name="Edit" component={EditEntry} options={{ headerShown: false }} />
+      <Stack.Screen name="Edit" component={EditEntry} options={{ headerShown: false }}/>
+      <Stack.Screen name="Details" component={Details} options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 };

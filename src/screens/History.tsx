@@ -41,6 +41,12 @@ const History = ({navigation}: props) => {
               <Pressable
                 key={idx}
                 style={styles.entry}
+                onPress={() => {
+                  navigation.navigate('Details', {
+                    dateKey: date,
+                    entryIndex: idx,
+                  });
+                }}
                 onLongPress={() =>
                   navigation.navigate('Edit', {
                     dateKey: date,

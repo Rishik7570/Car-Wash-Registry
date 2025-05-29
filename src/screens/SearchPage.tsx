@@ -86,6 +86,12 @@ const Search = ({navigation}: props) => {
             <Pressable
               key={idx}
               style={styles.entry}
+              onPress={() => {
+                navigation.navigate('Details', {
+                  dateKey: formattedDate,
+                  entryIndex: idx,
+                });
+              }}
               onLongPress={() => {
                 navigation.navigate('Edit', {
                   dateKey: formattedDate,
@@ -177,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   entryText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#222',
   },
   entryDesc: {

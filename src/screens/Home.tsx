@@ -35,7 +35,15 @@ const Home = ({navigation}: props) => {
       return;
     }
 
-    const time = selectedDate.toISOString();
+    const time = selectedDate.toLocaleString('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+
     const entry = {
       time,
       name,
