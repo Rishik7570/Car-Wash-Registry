@@ -11,8 +11,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
-import DocumentPicker, {types} from 'react-native-document-picker';
-import RNBlobUtil from 'react-native-blob-util';
+import {pick, types} from '@react-native-documents/picker';
 import {Store} from '../store/Store';
 
 const ImpExp = () => {
@@ -79,14 +78,21 @@ const ImpExp = () => {
     }
 
     try {
-      const file = await DocumentPicker.pick({
-        type: [types.plainText, types.allFiles], // or types.json, if defined
+      const [file] = await pick({
+        type: [types.plainText, types.allFiles],
+        allowMultiSelection: false,
       });
 
-      const uri = file[0].uri;
+      const uri = file.uri;
+      console.log('Picked URI:', uri);
 
-      // Read the file using BlobUtil
-      const content = await RNBlobUtil.fs.readFile(uri, 'utf8');
+      const destPath = `${RNFS.DocumentDirectoryPath}/import-temp.json`;
+
+      // Copy file from SAF to app-accessible location
+      await RNFS.copyFile(uri, destPath);
+
+      // Now read from the copied file
+      const content = await RNFS.readFile(destPath, 'utf8');
       const parsed = JSON.parse(content);
 
       await AsyncStorage.setItem('Year', JSON.stringify(parsed));
@@ -94,11 +100,8 @@ const ImpExp = () => {
 
       Alert.alert('Success', 'Data imported and refreshed!');
     } catch (err) {
-      console.log('Import error:', err);
-      if (!DocumentPicker.isCancel(err)) {
-        Alert.alert('Error', 'Failed to import data.');
-        console.error(err);
-      }
+      console.error('Import error:', err);
+      Alert.alert('Error', 'Failed to import data.');
     }
   };
 
