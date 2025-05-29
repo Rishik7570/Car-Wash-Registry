@@ -1,13 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React, { useContext } from 'react';
+import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamlist } from '../router/Router';
-import { Store } from '../store/Store';
 
 type Props = NativeStackScreenProps<RootStackParamlist, 'Open'>;
 
 const OpenScreen = ({ navigation }: Props) => {
-  const { setYearData, importYearData, exportYearData } = useContext(Store);
 
   return (
     <View style={styles.container}>
@@ -22,19 +20,6 @@ const OpenScreen = ({ navigation }: Props) => {
 
         <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('History')}>
           <Text style={styles.boxText}>History</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.backupSection}>
-        <TouchableOpacity
-          style={styles.smallBox}
-          onPress={() => importYearData(setYearData)}
-        >
-          <Text style={styles.smallBoxText}>📥 Import</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.smallBox} onPress={() => exportYearData()}>
-          <Text style={styles.smallBoxText}>📤 Export</Text>
         </TouchableOpacity>
       </View>
     </View>
