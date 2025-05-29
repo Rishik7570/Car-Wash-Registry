@@ -26,48 +26,43 @@ const EditEntry = ({route, navigation}: Props) => {
   const [type, setType] = useState<'credit' | 'debit'>(existing.type);
 
   const onSave = () => {
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount)) {
-      return;
-    }
+    const updatedAmount = parseFloat(amount);
+    const oldEntry = yearData[dateKey].entries[entryIndex];
 
-    const updatedEntry = {
-      ...existing,
-      name,
-      amount: parsedAmount,
-      desc,
-      type,
-    };
+    // Remove old amount from totals
+    let newCredit = yearData[dateKey].credit;
+    let newDebit = yearData[dateKey].debit;
 
-    const day = yearData[dateKey];
-    const oldEntry = day.entries[entryIndex];
-
-    // Start from current totals
-    let newCredit = day.credit;
-    let newDebit = day.debit;
-
-    // Step 1: Subtract old entry from its type
     if (oldEntry.type === 'credit') {
       newCredit -= oldEntry.amount;
     } else {
       newDebit -= oldEntry.amount;
     }
 
-    // Step 2: Add new entry to its new type
+    // Add new amount to totals
     if (type === 'credit') {
-      newCredit += parsedAmount;
+      newCredit += updatedAmount;
     } else {
-      newDebit += parsedAmount;
+      newDebit += updatedAmount;
     }
 
-    const updatedDay: dayRecord = {
-      ...day,
-      credit: newCredit,
-      debit: newDebit,
-      entries: [...day.entries],
+    const updatedEntry = {
+      ...oldEntry,
+      name,
+      amount: updatedAmount,
+      desc,
+      type,
     };
 
-    updatedDay.entries[entryIndex] = updatedEntry;
+    const updatedEntries = [...yearData[dateKey].entries];
+    updatedEntries[entryIndex] = updatedEntry;
+
+    const updatedDay: dayRecord = {
+      ...yearData[dateKey],
+      credit: newCredit,
+      debit: newDebit,
+      entries: updatedEntries,
+    };
 
     setYearData({
       ...yearData,
@@ -82,16 +77,20 @@ const EditEntry = ({route, navigation}: Props) => {
     const deletingEntry = day.entries[entryIndex];
 
     const updatedEntries = day.entries.filter((_, i) => i !== entryIndex);
+
+    let newCredit = day.credit;
+    let newDebit = day.debit;
+
+    if (deletingEntry.type === 'credit') {
+      newCredit -= deletingEntry.amount;
+    } else {
+      newDebit -= deletingEntry.amount;
+    }
+
     const updatedDay: dayRecord = {
       ...day,
-      credit:
-        deletingEntry.type === 'credit'
-          ? day.credit - deletingEntry.amount
-          : day.credit,
-      debit:
-        deletingEntry.type === 'debit'
-          ? day.debit - deletingEntry.amount
-          : day.debit,
+      credit: newCredit,
+      debit: newDebit,
       entries: updatedEntries,
     };
 

@@ -59,7 +59,12 @@ const Search = ({navigation}: props) => {
           onChange={(_, selectedDate) => {
             setShowPicker(Platform.OS === 'ios');
             if (selectedDate) {
-              setDate(selectedDate);
+              // Adjust for timezone offset
+              const adjustedDate = new Date(
+                selectedDate.getTime() +
+                  selectedDate.getTimezoneOffset() * 60000,
+              );
+              setDate(adjustedDate);
             }
           }}
           maximumDate={new Date()}

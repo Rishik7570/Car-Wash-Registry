@@ -4,6 +4,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import React, {useContext} from 'react';
 import {Store} from '../store/Store';
@@ -37,11 +38,14 @@ const History = ({navigation}: props) => {
               Credit: ₹{credit.toFixed(2)} | Debit: ₹{debit.toFixed(2)}
             </Text>
             {entries.map((entry, idx) => (
-              <TouchableOpacity
+              <Pressable
                 key={idx}
                 style={styles.entry}
                 onLongPress={() =>
-                  navigation.navigate('Edit', {dateKey: date, entryIndex: idx})
+                  navigation.navigate('Edit', {
+                    dateKey: date,
+                    entryIndex: idx,
+                  })
                 }>
                 <Text style={styles.entryText}>
                   {entry.name} - ₹{entry.amount} ({entry.type})
@@ -49,7 +53,7 @@ const History = ({navigation}: props) => {
                 {entry.desc ? (
                   <Text style={styles.entryDesc}>{entry.desc}</Text>
                 ) : null}
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
         );
