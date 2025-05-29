@@ -21,6 +21,10 @@ const OpenScreen = ({ navigation }: Props) => {
         <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('History')}>
           <Text style={styles.boxText}>History</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.box} onPress={() => navigation.navigate('ImpExp')}>
+          <Text style={styles.boxText}>Import / Export</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

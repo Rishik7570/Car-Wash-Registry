@@ -112,6 +112,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
 
     apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+    implementation project(':react-native-fs')
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
