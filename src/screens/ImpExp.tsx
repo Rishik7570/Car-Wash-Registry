@@ -11,7 +11,8 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
-import DocumentPicker from '@react-native-documents/picker';
+import DocumentPicker, {types} from 'react-native-document-picker';
+import RNBlobUtil from 'react-native-blob-util';
 import {Store} from '../store/Store';
 
 const ImpExp = () => {
@@ -41,15 +42,28 @@ const ImpExp = () => {
 
   const requestStoragePermission = async () => {
     if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: 'Storage Permission',
-          message: 'App needs access to your files to import data.',
-          buttonPositive: 'OK',
-        },
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
+      try {
+        const readGranted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission',
+            message: 'App needs access to your files to import data.',
+            buttonPositive: 'OK',
+          },
+        );
+
+        const mediaGranted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        );
+
+        return (
+          readGranted === PermissionsAndroid.RESULTS.GRANTED ||
+          mediaGranted === PermissionsAndroid.RESULTS.GRANTED
+        );
+      } catch (err) {
+        console.warn('Permission error:', err);
+        return false;
+      }
     }
     return true;
   };
@@ -63,24 +77,27 @@ const ImpExp = () => {
       );
       return;
     }
+
     try {
       const file = await DocumentPicker.pick({
-        type: DocumentPicker.types.allFiles,
-        allowMultiSelection: false,
+        type: [types.plainText, types.allFiles], // or types.json, if defined
       });
 
-      const content = await RNFS.readFile(file[0].uri, 'utf8');
+      const uri = file[0].uri;
+
+      // Read the file using BlobUtil
+      const content = await RNBlobUtil.fs.readFile(uri, 'utf8');
       const parsed = JSON.parse(content);
 
-      // Set to AsyncStorage and update context
       await AsyncStorage.setItem('Year', JSON.stringify(parsed));
-      setYearData(parsed); // Auto refresh UI
+      setYearData(parsed);
 
       Alert.alert('Success', 'Data imported and refreshed!');
     } catch (err) {
-      if (!DocumentPicker.isErrorWithCode(err)) {
-        console.error('Import error:', err);
+      console.log('Import error:', err);
+      if (!DocumentPicker.isCancel(err)) {
         Alert.alert('Error', 'Failed to import data.');
+        console.error(err);
       }
     }
   };
