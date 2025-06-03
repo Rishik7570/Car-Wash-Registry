@@ -37,4 +37,4 @@ A simple car wash registry that stores everyday's credit and debit.
 
 ## Download
 
-👉 [Click here to download the apk]('./src/assets/CarWash.apk')
+👉 [Click here to download the apk](https://github.com/Rishik7570/Car-Wash-Registry/releases/tag/v1.0.0)
